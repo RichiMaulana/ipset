@@ -30,8 +30,35 @@ function generate-ip2location {
         echo add $setName $ip >> $setName.txt
     done
 
+    ipset -! restore < $setLocation
+
+    rm $ipDatabaseLocation
+
     echo "Pembuatan set list sudah selesai"
-    echo "file berada di $setLocation"
+    echo "********************************"
+    ipset list $setName | head -n 7
+    echo "********************************"
+    echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
+
+ #   while true
+ #   do
+ #       case $hapusSet in 
+ #           Y)
+ #               rm $setLocation
+ #               break
+ #               ;;
+ #           N)
+ #               break ;;
+ #           *)
+ #               read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
+ #               if [ -n $hapusSet ]
+ #               then
+ #                   rm $setLocation
+ #                   break
+ #               fi
+ #               ;;
+ #       esac
+ #   done
 }
 
 
@@ -153,8 +180,19 @@ function generate-apnic {
 
   echo "Pembuatan set list sudah selesai"
   echo "file berada di $setLocation"
+
+  rm $apnicDBLocation
+
+  ipset -! restore < $setLocation
+
+  echo "Pembuatan set list sudah selesai"
+  echo "********************************"
+  ipset list $setName | head -n 7
+  echo "********************************"
+  echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
 }
 
+### Penggunaan
 if [ -z $dataBase ]
 then
     echo "Mohon sertakan nama database:"
