@@ -1,0 +1,204 @@
+#!/bin/bash
+
+dataBase=$1
+setName=$2
+setLocation=./$2.txt
+countryCode=$3
+
+# ApnicVariable
+apnicDBLink="https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest"
+apnicDBLocation="/tmp/apnicIP.txt"
+
+# Ip2LocationVariable
+ipDatabaseLink="http://elk.richi.web.id/database/country/$countryCode.gz"
+ipDatabaseLocation="/tmp/ip-$countryCode.gz"
+
+touch $setLocation
+
+echo "create $setName hash:net family inet hashsize 1024 maxelem 100000" > $setLocation
+
+### Menggunakan Database IP2Location
+function generate-ip2location {
+
+    echo "Membuat set list $countryCode"
+    echo "Mohon menunggu..."
+
+    curl -s -o $ipDatabaseLocation $ipDatabaseLink
+
+    for ip in `zcat $ipDatabaseLocation | grep -E '^([0-9]{1,3}\.){3}[0-9]{1,3}(/([0-32]))'`
+    do
+        echo add $setName $ip >> $setName.txt
+    done
+
+    echo "Pembuatan set list sudah selesai"
+    echo "file berada di $setLocation"
+}
+
+
+### Menggunakan Database Apnic ###
+function generate-apnic {
+
+    echo "Membuat set list $countryCode"
+    echo "Mohon menunggu..."
+
+    curl -s -o $apnicDBLocation $apnicDBLink
+
+  for ip in `cat $apnicDBLocation | grep "$countryCode" | grep "ipv4" | cut -d "|" -f 4`
+  do 
+    host=`cat $apnicDBLocation | grep "|$ip|" | cut -d "|" -f 5` 
+
+    if [ $host = 1 ]
+    then
+        prefix=32    
+    elif [ $host = 2 ]
+    then
+        prefix=31
+    elif [ $host = 4 ]
+    then
+        prefix=30
+    elif [ $host = 8 ]
+    then
+        prefix=29
+    elif [ $host = 16 ]
+    then
+        prefix=28
+    elif [ $host = 32 ]
+    then 
+        prefix=27
+    elif [ $host = 64 ]
+    then
+        prefix=26
+    elif [ $host = 128 ]
+    then
+        prefix=25
+    elif [ $host = 256 ]
+    then
+        prefix=24
+    elif [ $host = 512 ]
+    then
+        prefix=23
+    elif [ $host = 1024 ]
+    then
+        prefix=22
+    elif [ $host = 2048 ]
+    then
+        prefix=21
+    elif [ $host = 4096 ]
+    then
+        prefix=20
+    elif [ $host = 8192 ]
+    then
+        prefix=19
+    elif [ $host = 16384 ]
+    then
+        prefix=18
+    elif [ $host = 32768 ]
+    then
+        prefix=17
+    elif [ $host = 65536 ]
+    then 
+        prefix=16
+    elif [ $host = 131768 ]
+    then
+        prefix=15
+    elif [ $host =  262144 ]
+    then 
+        prefix=14
+    elif [ $host = 524288 ] 
+    then
+        prefix=13
+    elif [ $host = 1048576 ]
+    then
+        prefix=12
+    elif [ $host = 2097152 ]
+    then
+        prefix=11
+    elif [ $host = 4194304 ]
+    then
+        prefix=10
+    elif [ $host = 8388608 ]
+    then
+        prefix=9
+    elif [ $host = 16777216 ]
+    then 
+        prefix=8
+    elif [ $host = 33554432 ]
+    then
+        prefix=7
+    elif [ $host = 67108864 ]
+    then
+        prefix=6
+    elif [ $host = 134217728 ]
+    then
+        prefix=5
+    elif [ $host = 268435456 ]
+    then
+        prefix=4
+    elif [ $host = 536870912 ]
+    then
+        prefix=3
+    elif [ $host = 1073741824 ]
+    then
+        prefix=2
+    elif [ $host = 2147483648 ]
+    then 
+        prefix=1
+    elif [ $host = 4294967296 ]
+    then
+        prefix=0
+    fi
+
+    echo "add $setName $ip/$prefix" >> $setLocation
+  done
+
+  echo "Pembuatan set list sudah selesai"
+  echo "file berada di $setLocation"
+}
+
+if [ -z $dataBase ]
+then
+    echo "Mohon sertakan nama database:"
+    echo "  1. apnic"
+    echo "  2. ip2location"
+    echo "Isikan 1/2 atau nama database"
+    echo "Contoh penggunaan:"
+    echo "  exc-ipset <nama_database/1/2> <nama_set> <country_code>"
+    exit
+elif [ -z $setName ]
+then
+    echo "Mohon sertakan nama set"
+    echo "Contoh penggunaan:"
+    echo "  exc-ipset <nama_database/1/2> <nama_set> <country_code>"
+    exit
+elif [ -z $countryCode ]
+then
+    echo "Mohon sertakan country code"
+    echo "Contoh penggunaan:"
+    echo "  exc-ipset <nama_database/1/2> <nama_set> <country_code>"
+    exit
+fi
+
+### Case Pilihan
+case $dataBase in
+    apnic)
+        generate-apnic
+        ;;
+    ip2location)
+        generate-ip2location
+        ;;
+    1)
+        generate-apnic
+        ;;
+    2)
+        generate-ip2location
+        ;;
+    *)
+        echo "Nama database salah!"
+        echo "Pilih salah satu dari berikut: "
+        echo "  1. apnic"
+        echo "  2. ip2location"
+        echo "Isikan 1/2 atau nama database"
+        echo "Contoh penggunaan:"
+        echo "  exc-ipset <nama_database/1/2> <nama_set> <country_code>"
+        exit 
+esac
