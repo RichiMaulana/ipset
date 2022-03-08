@@ -40,6 +40,7 @@ function generate-ip2location {
     echo "********************************"
     echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
 
+### LOL wkwkwk :D
  #   while true
  #   do
  #       case $hapusSet in 
