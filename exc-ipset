@@ -38,28 +38,37 @@ function generate-ip2location {
     echo "********************************"
     ipset list $setName | head -n 7
     echo "********************************"
-    echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
+#    echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
 
-### LOL wkwkwk :D
- #   while true
- #   do
- #       case $hapusSet in 
- #           Y)
- #               rm $setLocation
- #               break
- #               ;;
- #           N)
- #               break ;;
- #           *)
- #               read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
- #               if [ -n $hapusSet ]
- #               then
- #                   rm $setLocation
- #                   break
- #               fi
- #               ;;
- #       esac
- #   done
+    read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
+
+    while true
+    do
+        case $hapusSet in 
+            Y)
+                rm $setLocation
+                break
+                ;;
+            N)
+                break ;;
+            *)
+                while true
+                do
+                    read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
+                    case $hapusSet in
+                        Y)
+                            rm $setLocation
+                            exit
+                            ;;
+                        N)
+                            break ;;
+                        *)
+                            break ;;
+                    esac
+                done
+                ;;
+        esac
+    done
 }
 
 
@@ -190,7 +199,37 @@ function generate-apnic {
   echo "********************************"
   ipset list $setName | head -n 7
   echo "********************************"
-  echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
+  #echo "file ipset berada di $setLocation jika dibutuhkan." #hapusSet
+
+    read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
+
+    while true
+    do
+        case $hapusSet in 
+            Y)
+                rm $setLocation
+                break
+                ;;
+            N)
+                break ;;
+            *)
+                while true
+                do
+                    read -p "file ipset berada di $setLocation jika dibutuhkan. Hapus saja? (Y/N) " hapusSet
+                    case $hapusSet in
+                        Y)
+                            rm $setLocation
+                            exit
+                            ;;
+                        N)
+                            break ;;
+                        *)
+                            break ;;
+                    esac
+                done
+                ;;
+        esac
+    done
 }
 
 ### Penggunaan
