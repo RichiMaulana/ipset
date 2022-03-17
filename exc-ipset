@@ -262,13 +262,15 @@ case $dataBase in
         generate-apnic
         ;;
     ip2location)
-        generate-ip2location
+        #generate-ip2location
+        echo "Mohon maaf untuk database ip2location saat ini belum bisa digunakan"
         ;;
     1)
         generate-apnic
         ;;
     2)
-        generate-ip2location
+        #generate-ip2location
+        echo "Mohon maaf untuk database ip2location saat ini belum bisa digunakan"
         ;;
     *)
         echo "Nama database salah!"
