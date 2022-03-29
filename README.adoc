@@ -1,3 +1,8 @@
 = ipset
 
 Script untuk membuat ipset list berdasarkan Country
+
+== Cata penggunaan
+
+[source, exc-ipset]
+exc-ipset <nama_database/1/2> <nama_set> <country_code>
